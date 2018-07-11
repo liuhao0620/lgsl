@@ -1,0 +1,24 @@
+[submodule "deps/luv"]
+	path = deps/luv
+	url = https://github.com/luvit/luv.git
+[submodule "deps/libuv"]
+	path = deps/libuv
+	url = https://github.com/libuv/libuv.git
+[submodule "deps/kcp"]
+	path = deps/kcp
+	url = https://github.com/skywind3000/kcp.git
+[submodule "deps/spdlog"]
+	path = deps/spdlog
+	url = https://github.com/gabime/spdlog.git
+[submodule "deps/zstd"]
+	path = deps/zstd
+	url = https://github.com/facebook/zstd.git
+[submodule "deps/checks"]
+	path = deps/checks
+	url = https://github.com/fab13n/checks.git
+[submodule "deps/luasql"]
+	path = deps/luasql
+	url = https://github.com/keplerproject/luasql.git
+[submodule "deps/lua"]
+	path = deps/lua
+	url = https://github.com/lua/lua.git
