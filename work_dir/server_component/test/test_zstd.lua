@@ -1,57 +1,7 @@
 package.path = package.path..";server_container/lua/?.lua"
 
-require("log")
-local lzstd = require("lzstd")
 local luv = require("luv")
-
-LogInit({
-    {
-        name = "test_logger",
-        level = "trace",
-        flush_on = "err",
-        sinks = {
-            {
-                type = "stdout",
-            },
-            {
-                type = "basic",
-                file_name = "server_component/test/test_logger.log",
-                truncate = true,
-            },
-        },
-    },
-    {
-        name = "test_logger2",
-        level = "trace",
-        flush_on = "err",
-        sinks = {
-            {
-                type = "stdout",
-            },
-            {
-                type = "basic",
-                file_name = "server_component/test/test_logger2.log",
-                truncate = true,
-            },
-        },
-    },
-})
-
-Log("trace", "test %s", "trace")
-LogTrace("test %s", "trace")
-LogDebug("test debug %d", 1)
-LogInfo("test info %c", 83)
-LogWarn("test warn")
-LogErr("test err %s", "err_msg")
-LogCritical("test critical")
-LogClose("test_logger")
-Log("trace", "test %s", "trace")
-LogTrace("test %s", "trace")
-LogDebug("test debug %d", 1)
-LogInfo("test info %c", 83)
-LogWarn("test warn")
-LogErr("test err %s", "err_msg")
-LogCritical("test critical")
+local lzstd = require("lzstd")
 
 local str1 = [[{
     {
@@ -85,11 +35,6 @@ local str1 = [[{
         },
     },
 }]]
-
-local dict_fd = luv.fs_open('server_component/test/a.dict', 'r', tonumber('644', 8))
-local dict_stat = luv.fs_fstat(dict_fd)
-local dict_chunk = luv.fs_read(dict_fd, dict_stat.size, 0)
-luv.fs_close(dict_fd)
 
 local compress_level = 3
 
@@ -164,6 +109,11 @@ end
 
 function test5()
     print("---------test5----------")
+    local dict_fd = luv.fs_open('server_component/test/a.dict', 'r', tonumber('644', 8))
+    local dict_stat = luv.fs_fstat(dict_fd)
+    local dict_chunk = luv.fs_read(dict_fd, dict_stat.size, 0)
+    luv.fs_close(dict_fd)
+
     local cctx = lzstd.create_cctx()
     local dctx = lzstd.create_dctx()
     local cdict = lzstd.create_cdict(dict_chunk, compress_level)
@@ -179,6 +129,11 @@ end
 
 function test6()
     print("---------test6----------")
+    local dict_fd = luv.fs_open('server_component/test/a.dict', 'r', tonumber('644', 8))
+    local dict_stat = luv.fs_fstat(dict_fd)
+    local dict_chunk = luv.fs_read(dict_fd, dict_stat.size, 0)
+    luv.fs_close(dict_fd)
+
     local cctx = lzstd.create_cctx()
     local dctx = lzstd.create_dctx()
     local cdict = lzstd.create_cdict(dict_chunk, compress_level)
@@ -206,5 +161,5 @@ test1()
 test2()
 test3()
 test4()
-test5()
-test6()
+--test5()
+--test6()

@@ -22,3 +22,6 @@
 [submodule "deps/lua"]
 	path = deps/lua
 	url = https://github.com/lua/lua.git
+[submodule "deps/lua-protobuf"]
+	path = deps/lua-protobuf
+	url = https://github.com/starwing/lua-protobuf
