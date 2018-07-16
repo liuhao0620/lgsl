@@ -25,3 +25,6 @@
 [submodule "deps/lua-protobuf"]
 	path = deps/lua-protobuf
 	url = https://github.com/starwing/lua-protobuf
+[submodule "deps/rabbitmq-c"]
+	path = deps/rabbitmq-c
+	url = https://github.com/alanxz/rabbitmq-c.git
