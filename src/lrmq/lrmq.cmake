@@ -15,7 +15,7 @@ endif (WIN32)
 
 add_library(lrmq SHARED ${LAMQ_SRC})
 target_include_directories(lrmq PUBLIC ${LUA_INC_DIR} ${RMQ_INC_DIR} ${LUA_WRAPPER_INC_DIR})
-target_link_libraries(lrmq lualib ${RMQ_LIB})
+target_link_libraries(lrmq ${LUA_LIB} ${RMQ_LIB})
 find_package(OpenSSL 0.9.8 REQUIRED)
 target_link_libraries(lrmq ${OPENSSL_LIBRARIES})
 if(WIN32)

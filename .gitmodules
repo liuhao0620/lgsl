@@ -28,3 +28,6 @@
 [submodule "deps/rabbitmq-c"]
 	path = deps/rabbitmq-c
 	url = https://github.com/alanxz/rabbitmq-c.git
+[submodule "deps/hiredis-win"]
+	path = deps/hiredis-win
+	url = https://github.com/lgsonic/hiredis-win.git

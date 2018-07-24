@@ -8,16 +8,24 @@ extern "C"
 
 #ifndef CHECK_LUA_INTEGER
 #define CHECK_LUA_INTEGER(integer_type) \
-	static void CheckLuaParam(lua_State * L, int index, integer_type & val) \
+	static void CheckLuaParam(lua_State * L, int index, integer_type & val, bool can_nil) \
 	{ \
+		if (can_nil && lua_isnoneornil(L, index)) \
+		{ \
+			return; \
+		} \
 		val = (integer_type)luaL_checkinteger(L, index); \
 	}
 #endif // !CHECK_LUA_INTEGER
 
 #ifndef CHECK_LUA_NUMBER
 #define CHECK_LUA_NUMBER(number_type) \
-	static void CheckLuaParam(lua_State * L, int index, number_type & val) \
+	static void CheckLuaParam(lua_State * L, int index, number_type & val, bool can_nil) \
 	{ \
+		if (can_nil && lua_isnoneornil(L, index)) \
+		{ \
+			return; \
+		} \
 		val = (number_type)luaL_checknumber(L, index); \
 	}
 #endif // !CHECK_LUA_NUMBER
@@ -65,13 +73,17 @@ namespace glory
 	//};
 
 	// check lua params
-	static void CheckLuaParam(lua_State * L, int index, LuaNil & val)
+	static void CheckLuaParam(lua_State * L, int index, LuaNil & val, bool can_nil)
 	{
 
 	}
 
-	static void CheckLuaParam(lua_State * L, int index, LuaUserdata & val)
+	static void CheckLuaParam(lua_State * L, int index, LuaUserdata & val, bool can_nil)
 	{
+		if (can_nil && lua_isnoneornil(L, index))
+		{
+			return;
+		}
 		if (val._tname.empty())
 		{
 			val._userdata = *(void **)lua_touserdata(L, index);
@@ -88,20 +100,32 @@ namespace glory
 	//	val._buf = luaL_checklstring(L, index, &val._len);
 	//}
 
-	static void CheckLuaParam(lua_State * L, int index, std::string & val)
+	static void CheckLuaParam(lua_State * L, int index, std::string & val, bool can_nil)
 	{
+		if (can_nil && lua_isnoneornil(L, index))
+		{
+			return;
+		}
 		size_t len = 0;
 		const char * buf = luaL_checklstring(L, index, &len);
 		val.assign(buf, len);
 	}
 
-	static void CheckLuaParam(lua_State * L, int index, const char * & val)
+	static void CheckLuaParam(lua_State * L, int index, const char * & val, bool can_nil)
 	{
+		if (can_nil && lua_isnoneornil(L, index))
+		{
+			return;
+		}
 		val = luaL_checkstring(L, index);
 	}
 
-	static void CheckLuaParam(lua_State * L, int index, bool & val)
+	static void CheckLuaParam(lua_State * L, int index, bool & val, bool can_nil)
 	{
+		if (can_nil && lua_isnoneornil(L, index))
+		{
+			return;
+		}
 		luaL_argcheck(L, lua_isboolean(L, index), index, "Need a Boolean");
 		val = lua_toboolean(L, index) != 0;
 	}
@@ -117,21 +141,26 @@ namespace glory
 	CHECK_LUA_NUMBER(float)
 	CHECK_LUA_NUMBER(double)
 
-	template <int N, typename T>
+	template <bool CAN_NIL, int MINPN, int N, typename T>
 	void CheckLuaParam(lua_State * L, T&& param)
 	{
-		CheckLuaParam(L, N, param);
+		CheckLuaParam(L, N, param, (CAN_NIL && (MINPN <= N)));
 	}
-	template <int N, class T, typename ...PTS>
+	template <bool CAN_NIL, int MINPN, int N, class T, typename ...PTS>
 	void CheckLuaParam(lua_State * L, T&& param, PTS&& ...params)
 	{
-		CheckLuaParam(L, N, param);
-		CheckLuaParam<N + 1>(L, std::forward<PTS>(params)...);
+		CheckLuaParam(L, N, param, (CAN_NIL && (MINPN <= N)));
+		CheckLuaParam<CAN_NIL, MINPN, N + 1>(L, std::forward<PTS>(params)...);
+	}
+	template <bool CAN_NIL, int MINPN/*min param num*/, class T, typename ...PTS>
+	void CheckLuaParam(lua_State * L, T&& param, PTS&& ...params)
+	{
+		CheckLuaParam<CAN_NIL, MINPN, 1>(L, param, std::forward<PTS>(params)...);
 	}
 	template <class T, typename ...PTS>
 	void CheckLuaParam(lua_State * L, T&& param, PTS&& ...params)
 	{
-		CheckLuaParam<1>(L, param, std::forward<PTS>(params)...);
+		CheckLuaParam<false, 0, 1>(L, param, std::forward<PTS>(params)...);
 	}
 
 	// return lua results
@@ -206,7 +235,7 @@ namespace glory
 	{
 		char temp[MaxN];
 		memset(temp, 0, MaxN);
-		sprintf(temp, fmt, args...);
+		snprintf(temp, MaxN - 1, fmt, args...);
 		return std::string(temp);
 	}
 }
