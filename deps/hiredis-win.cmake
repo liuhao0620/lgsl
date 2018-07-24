@@ -12,17 +12,5 @@ add_library(hiredis STATIC ${HIREDIS_SRC})
 
 set(HIREDIS_LIB hiredis 
     ws2_32
-    shlwapi
-    kernel32
-    user32
-    gdi32
-    winspool
-    comdlg32
-    advapi32
-    shell32
-    ole32
-    oleaut32
-    uuid
-    odbc32
-    odbccp32)
+    shlwapi)
 set(HIREDIS_INC_DIR ${HIREDIS_DIR})
